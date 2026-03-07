@@ -1,4 +1,5 @@
-import { getSingleProduct } from "@/server/product";
+import CartBUtton from "@/components/buttons/CartBUtton";
+import { getSingleProduct } from "@/actions/server/product";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const renderStars = (rating) => {
@@ -74,7 +75,8 @@ const ProductDetails = async ({ params }) => {
 
           <p className="text-sm text-gray-500 mb-4">{sold} items sold</p>
 
-          <button className="btn btn-primary w-full mb-6">Add to Cart</button>
+          {/* add to cart */}
+          <CartBUtton product={product} />
 
           {/* Info List */}
           <ul className="list-disc pl-5 space-y-2">

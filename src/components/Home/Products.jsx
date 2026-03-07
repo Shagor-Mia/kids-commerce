@@ -1,6 +1,6 @@
 import React from "react";
 import ProductCard from "../Cards/ProductsCard";
-import { getProducts, getSingleProduct } from "@/server/product";
+import { getProducts, getSingleProduct } from "@/actions/server/product";
 
 export async function generateMetadata({ params }) {
   const { id } = params;
