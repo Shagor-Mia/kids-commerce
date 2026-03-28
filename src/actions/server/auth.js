@@ -40,6 +40,11 @@ export const loginUser = async (payload) => {
   // if user not found
   if (!user) return null;
 
+  //  NEW LOGIC
+  if (user.provider === "google") {
+    throw new Error("GOOGLE_ACCOUNT");
+  }
+
   // compare password
   const isMatched = await bcrypt.compare(password, user.password);
 

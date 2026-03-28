@@ -23,15 +23,23 @@ export default function LoginForm() {
     const result = await signIn("credentials", {
       email: form.email,
       password: form.password,
-      // redirect: false,
-      callbackUrl: params.get("callbackUrl") || "/",
+      redirect: false,
+      callbackUrl: callBack,
     });
 
     if (result?.ok) {
       Swal.fire("success", "Login successful", "success");
-      router.push("/");
+      router.push(callBack);
     } else if (result?.error) {
-      Swal.fire("error", "Email or password not matched.", "error");
+      if (result.error === "GOOGLE_ACCOUNT") {
+        Swal.fire(
+          "Google Account",
+          "You are Google logged in with this email",
+          "warning",
+        );
+      } else {
+        Swal.fire("error", "Email or password not matched.", "error");
+      }
     }
   };
 

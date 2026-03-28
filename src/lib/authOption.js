@@ -14,13 +14,12 @@ export const authOptions = {
       },
 
       async authorize(credentials) {
-        const user = await loginUser(credentials);
-
-        if (!user) {
-          return null;
+        try {
+          const user = await loginUser(credentials);
+          return user;
+        } catch (error) {
+          throw new Error(error.message);
         }
-
-        return user; //  return user
       },
     }),
     GoogleProvider({
@@ -28,26 +27,6 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  // session: {
-  //   strategy: "jwt",
-  // },
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //       token.role = user.role;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     session.user.id = token.id;
-  //     session.user.role = token.role;
-  //     return session;
-  //   },
-  // },
-  // pages: {
-  //   signIn: "/login",
-  // },
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
@@ -67,18 +46,36 @@ export const authOptions = {
           });
         }
       }
-      console.log({ user, account, profile, email, credentials });
+      // console.log({ user, account, profile, email, credentials });
 
       return true;
     },
     // async redirect({ url, baseUrl }) {
     //   return baseUrl
     // },
-    // async session({ session, token, user }) {
-    //   return session
-    // },
-    // async jwt({ token, user, account, profile, isNewUser }) {
-    //   return token
-    // }
+    async session({ session, token, user }) {
+      if (token) {
+        session.role = token?.role;
+        session.email = token?.email;
+      }
+      return session;
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // console.log("account data in token", account);
+      if (user) {
+        if (account.provider == "google") {
+          const dbUser = await dbConnect(collections.USERS).findOne({
+            email: user.email,
+          });
+
+          token.role = dbUser?.role;
+          token.email = dbUser?.email;
+        } else {
+          token.role = user?.role;
+          token.email = user?.email;
+        }
+      }
+      return token;
+    },
   },
 };

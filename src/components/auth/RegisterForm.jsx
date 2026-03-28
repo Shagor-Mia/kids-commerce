@@ -5,6 +5,7 @@ import Link from "next/link";
 import { postUser } from "@/actions/server/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
 
 export default function RegisterForm() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -29,7 +30,12 @@ export default function RegisterForm() {
         password: form.password,
         callbackUrl: callBackUrl,
       });
-      alert("successful.");
+      if (result?.ok) {
+        Swal.fire("succeess", "register success.", "success");
+        router.push(callBackUrl);
+      } else {
+        Swal.fire("error", "Sorry", "error");
+      }
     }
   };
 
