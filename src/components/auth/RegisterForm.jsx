@@ -3,12 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { postUser } from "@/actions/server/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function RegisterForm() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const router = useRouter();
+  const param = useSearchParams();
+  const callBackUrl = param.get("callbackUrl") || "/";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,8 +23,13 @@ export default function RegisterForm() {
     const result = await postUser(form);
     // console.log(data);
     if (result.acknowledged) {
-      alert("successful, please login.");
-      router.push("/login");
+      // router.push("/login");
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        callbackUrl: callBackUrl,
+      });
+      alert("successful.");
     }
   };
 

@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import SocialButton from "./SocialButton";
 
 export default function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const router = useRouter();
+  const params = useSearchParams();
+  const callBack = params.get("callbackUrl") || "/";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,23 +19,20 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const result = await signIn("credentials", {
       email: form.email,
       password: form.password,
-      redirect: false,
+      // redirect: false,
+      callbackUrl: params.get("callbackUrl") || "/",
     });
-    console.log(result);
-    if (result?.ok) {
-      Swal.fire("success", " login successful", "success");
-      router.push("/");
-    } else {
-      Swal.fire("error", "email,password not matched.", "error");
-    }
-    // console.log(form);
-  };
 
-  const handleGoogleLogin = () => {
-    window.location.href = "/api/google";
+    if (result?.ok) {
+      Swal.fire("success", "Login successful", "success");
+      router.push("/");
+    } else if (result?.error) {
+      Swal.fire("error", "Email or password not matched.", "error");
+    }
   };
 
   return (
@@ -63,17 +63,14 @@ export default function LoginForm() {
 
         <button className="btn btn-primary w-full">Login</button>
 
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="btn btn-outline w-full"
-        >
-          Login with Google
-        </button>
+        <SocialButton />
 
         <p className="text-center mt-4">
           Don't have an account?{" "}
-          <Link href="/register" className="text-primary underline">
+          <Link
+            href={`/register?callbackUrl=${callBack.slice(1)}`}
+            className="text-primary underline"
+          >
             Please Register
           </Link>
         </p>

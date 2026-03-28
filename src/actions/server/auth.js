@@ -48,7 +48,9 @@ export const loginUser = async (payload) => {
 
   // success login
   return {
-    ...user,
-    _id: user._id.toString(),
+    id: user._id.toString(),
+    email: user.email,
+    name: user.name,
+    role: user.role,
   };
 };
