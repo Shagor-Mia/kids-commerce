@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import CartBUtton from "../buttons/CartBUtton";
 
 const ProductCard = ({ product }) => {
   const { _id, title, image, price, ratings, reviews, sold } = product;
@@ -20,41 +21,48 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition duration-300">
-      {/* Clickable Image */}
+    <div className="card bg-base-100 shadow-md hover:shadow-xl transition duration-300 rounded-xl overflow-hidden">
+      {/* Image */}
       <Link href={`/products/${_id}`}>
-        <figure>
+        <figure className="cursor-pointer">
           <Image
             height={200}
             width={300}
             src={image}
             alt={title}
-            className="h-48 w-full object-cover rounded-t-lg"
+            className="h-48 w-full object-cover"
           />
         </figure>
       </Link>
 
       <div className="card-body p-4">
-        {/* Clickable Title */}
+        {/* Title */}
         <Link href={`/products/${_id}`}>
           <h2 className="card-title text-md font-semibold hover:text-primary cursor-pointer">
             {title}
           </h2>
         </Link>
 
-        <div className="flex items-center space-x-2 text-sm mt-1">
+        {/* Rating */}
+        <div className="flex items-center gap-2 text-sm mt-1">
           <div className="flex">{renderStars(ratings)}</div>
           <span>({reviews} reviews)</span>
         </div>
 
+        {/* Price */}
         <p className="text-lg font-bold mt-2">৳{price}</p>
+
+        {/* Sold */}
         <p className="text-sm text-gray-500">{sold} sold</p>
 
-        <div className="card-actions mt-4 flex gap-2">
-          <button className="btn btn-primary ">Add to Cart</button>
+        {/* Buttons */}
+        <div className="mt-4  gap-2">
+          {/* Add to Cart */}
+          <CartBUtton product={{ ...product, _id: _id.toString() }} />
 
-          <Link href={`/products/${_id}`} className="">
-            <button className="btn btn-primary btn-outline ">
+          {/* View Details */}
+          <Link href={`/products/${_id}`}>
+            <button className="btn btn-outline btn-primary w-full">
               View Details
             </button>
           </Link>

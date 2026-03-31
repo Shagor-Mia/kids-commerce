@@ -6,11 +6,11 @@ import { getServerSession } from "next-auth";
 import Image from "next/image";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
   return (
     <div className="space-y-20">
-      <Test />
-      <p>{JSON.stringify(session)}</p>
+      {/* <Test /> */}
+      {/* <p>{JSON.stringify(session)}</p> */}
       <section>
         <Banner />
       </section>
