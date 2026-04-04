@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import CartItems from "../Cards/CartItems";
+import Link from "next/link";
 
 const ClientCart = ({ cartItem = [] }) => {
   const [items, setItem] = useState(cartItem);
@@ -91,14 +92,12 @@ const ClientCart = ({ cartItem = [] }) => {
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
             </div>
-
-            {/* Button */}
-            <button
-              className="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
-              disabled={items.length === 0}
+            <Link
+              href="/checkout"
+              className="flex items-center justify-center w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-gray-800"
             >
               Confirm Order
-            </button>
+            </Link>
           </div>
         </div>
       </div>

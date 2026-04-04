@@ -50,6 +50,7 @@ export const getCart = cache(async () => {
     }
     const query = { email: user?.email };
     const result = await cartCollection.find(query).toArray();
+
     const safeData = result.map((item) => ({
       ...item,
       _id: item._id.toString(),
@@ -126,6 +127,22 @@ export const decreaseItemDB = async (id, quantity) => {
     const result = await cartCollection.updateOne(query, updatedData);
 
     return { success: Boolean(result.modifiedCount) };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const clearCart = async () => {
+  try {
+    const user = (await getServerSession(authOptions)) || {};
+    if (!user) {
+      return { success: false };
+    }
+
+    const query = { email: user?.email };
+    const result = await cartCollection.deleteMany(query);
+
+    return result;
   } catch (error) {
     console.log(error);
   }

@@ -17,6 +17,7 @@ const CartItems = ({ item, removeItem, updateQuantity }) => {
   const subtotal = price * quantity;
 
   const handleDeleteCart = async () => {
+    setLoading(true);
     Swal.fire({
       title: "Remove item?",
       text: "This item will be removed from your cart.",
@@ -25,6 +26,7 @@ const CartItems = ({ item, removeItem, updateQuantity }) => {
       confirmButtonText: "Yes, remove",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setLoading(false);
         const res = await deleteItemsFromCart(_id);
         removeItem(_id);
         if (res?.success) {
@@ -33,6 +35,7 @@ const CartItems = ({ item, removeItem, updateQuantity }) => {
           Swal.fire("Error!", "Something went wrong.", "error");
         }
       }
+      setLoading(false);
     });
   };
 
