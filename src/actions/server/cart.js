@@ -9,23 +9,26 @@ import { cache } from "react";
 
 const cartCollection = await dbConnect(collections.CART);
 
-export const handleCart = async ({ product, inc = true }) => {
+export const handleCart = async (productId) => {
   const { user } = (await getServerSession(authOptions)) || {};
   if (!user) return { success: false };
   //   get cart item,using email, pro.id
-  const query = { email: user?.email, productId: product?._id };
+  const query = { email: user?.email, productId: productId };
   const isAdded = await cartCollection.findOne(query);
   if (isAdded) {
     //   if exist update cart
     const updateData = {
       $inc: {
-        quantity: inc ? 1 : -1,
+        quantity: 1,
       },
     };
     const result = await cartCollection.updateOne(query, updateData);
     return { success: Boolean(result.modifiedCount) };
   } else {
     //   if not exist insert cart
+    const product = await dbConnect(collections.PRODUCTS).findOne({
+      _id: new ObjectId(productId),
+    });
     const newProduct = {
       productId: product?._id,
       email: user?.email,
@@ -54,6 +57,7 @@ export const getCart = cache(async () => {
     const safeData = result.map((item) => ({
       ...item,
       _id: item._id.toString(),
+      productId: item.productId?.toString(),
     }));
 
     return safeData;
@@ -72,7 +76,7 @@ export const deleteItemsFromCart = async (id) => {
     if (id?.length != 24) {
       return { success: false };
     }
-    const query = { _id: new ObjectId(id) };
+    const query = { _id: new ObjectId(id), email: user?.email };
     const result = await cartCollection.deleteOne(query);
 
     // if (Boolean(result.deletedCount)) {
@@ -117,7 +121,7 @@ export const decreaseItemDB = async (id, quantity) => {
     if (quantity <= 1) {
       return { success: false, message: "you cant buy 10 product at a time." };
     }
-    const query = { _id: new ObjectId(id) };
+    const query = { _id: new ObjectId(id), email: user?.email };
 
     const updatedData = {
       $inc: {
